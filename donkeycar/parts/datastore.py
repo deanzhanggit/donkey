@@ -17,8 +17,8 @@ import pandas as pd
 
 from PIL import Image
 from donkeycar import utils
-
-
+import cv2
+import random
 class OriginalWriter:
     """
     TODO: DELTE THIS? Is this ever used now?
@@ -355,8 +355,6 @@ class Tub(object):
         data = self.read_record(json_data)
         return data
 
-
-
     def read_record(self, record_dict):
         data={}
         for key, val in record_dict.items():
@@ -364,9 +362,17 @@ class Tub(object):
 
             #load objects that were saved as separate files
             if typ == 'image_array':
-                img = Image.open((val))
-                val = np.array(img)
-
+                #read image
+                img = cv2.imread((val))
+                #crop
+                img = img[21:120,:,:]
+                #random brightness
+                img = img*(random.randint(-20,20)/100.0+1.0)
+                img = np.clip(img,0,255)
+                #select V channal
+                img_hsv_v = cv2.cvtColor(img.astype(np.uint8),cv2.COLOR_BGR2HSV)[:,:,2]/127.5-1.0
+                img_hsv_v = np.expand_dims(img_hsv_v, axis=2)
+                val = img_hsv_v
             data[key] = val
 
 

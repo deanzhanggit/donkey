@@ -19,11 +19,9 @@ import donkeycar as dk
 #import parts
 from donkeycar.parts.camera import PiCamera
 from donkeycar.parts.transform import Lambda
-from donkeycar.parts.keras import KerasCategorical
-from donkeycar.parts.actuator import PCA9685, PWMSteering, PWMThrottle
+from donkeycar.parts.keras import KerasCategorical,KerasLinear
 from donkeycar.parts.datastore import TubHandler, TubGroup
 from donkeycar.parts.controller import LocalWebController, JoystickController
-
 
 
 def drive(cfg, model_path=None, use_joystick=False):
@@ -71,13 +69,13 @@ def drive(cfg, model_path=None, use_joystick=False):
     V.add(pilot_condition_part, inputs=['user/mode'], outputs=['run_pilot'])
     
     #Run the pilot if the mode is not user.
-    kl = KerasCategorical()
+    kl = KerasLinear()
     if model_path:
         kl.load(model_path)
     
     V.add(kl, inputs=['cam/image_array'], 
-          outputs=['pilot/angle', 'pilot/throttle'],
-          run_condition='run_pilot')
+           outputs=['pilot/angle', 'pilot/throttle'],
+           run_condition='run_pilot')
     
     
     #Choose what inputs should change the car.
@@ -85,7 +83,7 @@ def drive(cfg, model_path=None, use_joystick=False):
                    user_angle, user_throttle,
                    pilot_angle, pilot_throttle):
         if mode == 'user': 
-            return user_angle, user_throttle
+            print(user_angle, user_throttle)
         
         elif mode == 'local_angle':
             return pilot_angle, user_throttle
@@ -99,17 +97,17 @@ def drive(cfg, model_path=None, use_joystick=False):
                   'pilot/angle', 'pilot/throttle'], 
           outputs=['angle', 'throttle'])
     
-    
+
     steering_controller = PCA9685(cfg.STEERING_CHANNEL)
     steering = PWMSteering(controller=steering_controller,
-                                    left_pulse=cfg.STEERING_LEFT_PWM, 
-                                    right_pulse=cfg.STEERING_RIGHT_PWM)
+                                     left_pulse=cfg.STEERING_LEFT_PWM, 
+                                     right_pulse=cfg.STEERING_RIGHT_PWM)
     
     throttle_controller = PCA9685(cfg.THROTTLE_CHANNEL)
     throttle = PWMThrottle(controller=throttle_controller,
-                                    max_pulse=cfg.THROTTLE_FORWARD_PWM,
-                                    zero_pulse=cfg.THROTTLE_STOPPED_PWM, 
-                                    min_pulse=cfg.THROTTLE_REVERSE_PWM)
+                                     max_pulse=cfg.THROTTLE_FORWARD_PWM,
+                                     zero_pulse=cfg.THROTTLE_STOPPED_PWM, 
+                                     min_pulse=cfg.THROTTLE_REVERSE_PWM)
     
     V.add(steering, inputs=['angle'])
     V.add(throttle, inputs=['throttle'])
@@ -137,16 +135,14 @@ def train(cfg, tub_names, model_name):
     X_keys = ['cam/image_array']
     y_keys = ['user/angle', 'user/throttle']
 
-    def rt(record):
-        record['user/angle'] = dk.utils.linear_bin(record['user/angle'])
-        return record
 
-    kl = KerasCategorical()
+
+    kl = KerasLinear()
     print('tub_names', tub_names)
     if not tub_names:
         tub_names = os.path.join(cfg.DATA_PATH, '*')
     tubgroup = TubGroup(tub_names)
-    train_gen, val_gen = tubgroup.get_train_val_gen(X_keys, y_keys, record_transform=rt,
+    train_gen, val_gen = tubgroup.get_train_val_gen(X_keys, y_keys,
                                                     batch_size=cfg.BATCH_SIZE,
                                                     train_frac=cfg.TRAIN_TEST_SPLIT)
 

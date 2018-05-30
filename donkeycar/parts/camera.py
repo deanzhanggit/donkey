@@ -5,8 +5,13 @@ from PIL import Image
 import glob
 
 class BaseCamera:
-
     def run_threaded(self):
+        #you can add some image preprocess code at here.
+        #example:
+        #frame = self.frame.copy()
+        #frame = frame[20:120,:,:]   #crop
+        #...
+
         return self.frame
 
 class PiCamera(BaseCamera):
