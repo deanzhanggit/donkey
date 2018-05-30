@@ -2,26 +2,28 @@
 I modified the following files in kuaikai competition.
 
 ### donkeycar/parts/keras.py
-https://github.com/deanzhanggit/donkeycar_kuaikai/blob/43389b60d8fcfba5d80b1548bbedfb45d3483ea1/donkeycar/parts/keras.py#L260
+https://github.com/deanzhanggit/donkey/blob/9e403cfa0de4fa15f7ade3f50beb98df5d142df0/donkeycar/parts/keras.py#L260
 
 I use the linear model in kuaikai competition. I don't do experiment to compare the linear model and classification model. So I don't know which is the best.
 I also crop the image, so the shape of CNN's input is (99,160,1) 
 
 ### donkeycar/parts/datastore.py
-https://github.com/deanzhanggit/donkeycar_kuaikai/blob/43389b60d8fcfba5d80b1548bbedfb45d3483ea1/donkeycar/parts/datastore.py#L358
+https://github.com/deanzhanggit/donkey/blob/9e403cfa0de4fa15f7ade3f50beb98df5d142df0/donkeycar/parts/datastore.py#L366
 
 I convert the image from RGB color space to HSV color space and select the V channal as the input of the CNN. 
 
 ### donkeycar/parts/camera.py
-https://github.com/deanzhanggit/donkeycar_kuaikai/blob/58c7120b8501ce5c5cc5ea087b62b2837eb58c90/donkeycar/parts/camera.py#L8
+https://github.com/deanzhanggit/donkey/blob/9e403cfa0de4fa15f7ade3f50beb98df5d142df0/donkeycar/parts/camera.py#L9
 
 If you customlize your image preprocess in donkeycar/parts/datastore.py line 358 during training , you can add the image preprocess code at here for predicting. 
 
 ### donkeycar/templates/donkey2.py
 
-https://github.com/deanzhanggit/donkeycar_kuaikai/blob/f0723f46ac55844088f59c8ba001f482478ac7e9/donkeycar/templates/donkey2.py#L72
+https://github.com/deanzhanggit/donkey/blob/9e403cfa0de4fa15f7ade3f50beb98df5d142df0/donkeycar/templates/donkey2.py#L72
 
-https://github.com/deanzhanggit/donkeycar_kuaikai/blob/f0723f46ac55844088f59c8ba001f482478ac7e9/donkeycar/templates/donkey2.py#L140
+https://github.com/deanzhanggit/donkey/blob/9e403cfa0de4fa15f7ade3f50beb98df5d142df0/donkeycar/templates/donkey2.py#L140
+
+https://github.com/deanzhanggit/donkey/blob/9e403cfa0de4fa15f7ade3f50beb98df5d142df0/donkeycar/templates/donkey2.py#L145
 
 # Dataset
 
